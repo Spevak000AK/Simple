@@ -60,6 +60,7 @@ object frmDLLExport: TfrmDLLExport
     Height = 486
     Align = alClient
     ItemHeight = 13
+    MultiSelect = True
     TabOrder = 1
     OnDblClick = lbViewDblClick
     OnKeyDown = lbViewKeyDown

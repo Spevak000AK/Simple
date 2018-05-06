@@ -9,8 +9,6 @@ uses
 
 const
  cTitle   = 'View DLL Export';
- cMSDN    = 0;
-// cGOOGLE  = 1;
 
 type
   TfrmDLLExport = class(TForm)
@@ -35,7 +33,7 @@ type
 
     Procedure LoadFile(const aFileName: string);
     Procedure FilteredList;
-    Procedure SearchEngine(const aFuncName: string; aEngine: Byte = cMSDN );
+    Procedure SearchEngine(const aFuncName: string );
 
   public
     { Public declarations }
@@ -63,7 +61,6 @@ var
   pNameRVAs: ^TDWordArray;
   Name: AnsiString;
 begin
-  aFileName:= Trim(aFileName); // А надо ли ?
   if (aFileName<>'') and not Assigned(aList) then Exit;
 
   aList.BeginUpdate;
@@ -95,7 +92,7 @@ begin
   aList.EndUpdate;
 end;
 
-Procedure TfrmDLLExport.SearchEngine(const aFuncName: string; aEngine: Byte);
+Procedure TfrmDLLExport.SearchEngine(const aFuncName: string);
 const
  cQuery = 'https://social.msdn.microsoft.com/Search/ru-RU?query=%s&emptyWatermark=true&addenglish=1';
 Begin
@@ -168,9 +165,30 @@ end;
 
 procedure TfrmDLLExport.lbViewKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+
+  procedure CopyInClipboard;
+  var i: Integer;
+      tmpStr: string;
+  Begin
+   tmpStr:= '';
+   for i := 0 to lbView.Count-1 do
+    if lbView.Selected[i] then
+     tmpStr:= Concat(tmpStr, lbView.Items[i], sLineBreak);
+
+   Clipboard.AsText:= tmpStr;
+  End;
+
 begin
- if (ssCtrl in Shift) and (Key in [ord('c'), ord('C'), ord('с'), ord('С')] ) and (lbView.ItemIndex > 0)  then
-  Clipboard.AsText:= lbView.Items.Strings[lbView.ItemIndex];
+
+ if (ssCtrl in Shift) and (Key = 67) and (lbView.ItemIndex > 0) then
+  CopyInClipboard
+ else if (ssCtrl in Shift) and (Key = 65 ) and (lbView.Count > 0) then
+  Begin
+   lbView.Items.BeginUpdate;
+   lbView.SelectAll;
+   lbView.Items.EndUpdate;
+  end;
+
 end;
 
 
